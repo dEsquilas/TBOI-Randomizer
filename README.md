@@ -12,9 +12,9 @@ A randomizer for **The Binding of Isaac: Rebirth** and its DLCs. Randomly select
 - **Extra Challenges**: Optional gameplay modifiers (no items, blindfolded, etc.)
 - **Stream-Friendly**: Multiple display modes including chroma key support
 
-## Screenshots
+## Demo
 
-![TBOI Randomizer](https://raw.githubusercontent.com/TRPG0/TBOI-Random-Generator/main/screenshot.png)
+Try it live: **[https://tboi-randomizer.desquilas.me/](https://tboi-randomizer.desquilas.me/)**
 
 ## Getting Started
 
