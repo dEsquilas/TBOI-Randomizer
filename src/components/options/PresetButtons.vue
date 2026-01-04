@@ -7,7 +7,7 @@ const store = useGameStore()
 function applyPreset(presetName) {
   const preset = PRESETS[presetName]
   if (preset) {
-    store.applyPreset(preset)
+    store.applyPresetToTargets(preset)
   }
 }
 </script>
@@ -15,7 +15,7 @@ function applyPreset(presetName) {
 <template>
   <div class="mb-4">
     <h3 class="font-bold mb-1">Presets</h3>
-    <p class="text-xs text-gray-500 mb-2">Overrides selected characters and objectives.</p>
+    <p class="text-xs text-gray-500 mb-2">Sets targets for the selected game version.</p>
     <div class="flex flex-wrap gap-2">
       <button
         v-for="preset in ['rebirth', 'afterbirth', 'antibirth', 'afterbirthPlus', 'repentance']"
