@@ -35,3 +35,6 @@ old
 # Vitest
 __screenshots__/
 test-results/
+
+# Claude
+.claude/settings.local.json
