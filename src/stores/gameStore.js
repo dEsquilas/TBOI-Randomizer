@@ -55,7 +55,12 @@ export const useGameStore = defineStore('game', () => {
 
   // UI state
   const isRandomizing = ref(false)
+  const isSpinning = ref(false)
   const optionsPanelOpen = ref(false)
+
+  // Spinning animation state
+  const spinningPlayers = ref([])
+  const spinningObjectives = ref([])
 
   // Results
   const results = ref({
@@ -284,7 +289,11 @@ export const useGameStore = defineStore('game', () => {
     completion,
     // UI
     isRandomizing,
+    isSpinning,
     optionsPanelOpen,
+    // Spinning
+    spinningPlayers,
+    spinningObjectives,
     // Results
     results,
     // Computed
