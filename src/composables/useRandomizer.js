@@ -1,5 +1,5 @@
 import { useGameStore } from '@/stores/gameStore'
-import { ALL_CHARACTERS, OBJECTIVES, TIMED_OBJECTIVES, CHALLENGES, CHALLENGE_INCOMPATIBILITIES } from '@/constants/gameData'
+import { ALL_CHARACTERS, OBJECTIVES, TIMED_OBJECTIVES, CHALLENGES, CHALLENGE_INCOMPATIBILITIES, ALL_GAME_CHALLENGES } from '@/constants/gameData'
 
 export function useRandomizer() {
   const store = useGameStore()
@@ -53,142 +53,119 @@ export function useRandomizer() {
     return CHALLENGES.find(c => c.id === id)
   }
 
+  function getGameChallengeById(id) {
+    return ALL_GAME_CHALLENGES.find(c => c.id === id)
+  }
+
   function randomize(skipSet = false) {
-    const numPlayers = store.numberPlayers
-    const noDuplicates = store.duplicateCheck
-    const checkCompletion = store.completionCheck && numPlayers === 1
+    const checkCompletion = store.completionCheck
+    const allObjectives = [...OBJECTIVES, ...TIMED_OBJECTIVES]
 
-    // Build character pool
-    let characterPool = buildWeightedArray(
-      ALL_CHARACTERS,
-      store.characterWeights,
-      store.selectedCharacters
-    )
+    // Build pool of available objectives from targets (panel derecho)
+    // An objective is available if at least one character has it targeted (and not completed if checkCompletion)
+    const availableObjectives = allObjectives.filter(obj => {
+      // Check if any character has this objective targeted and not completed
+      return ALL_CHARACTERS.some(char => {
+        const isTargeted = store.isTargeting(char.id, obj.id)
+        if (!isTargeted) return false
+        if (checkCompletion && store.getCompletion(char.id, obj.id)) return false
+        return true
+      })
+    })
 
-    // Add custom characters if enabled
-    if (store.customCharactersEnabled) {
-      store.customCharacters.forEach(custom => {
-        if (custom.enabled && custom.name) {
-          const weight = custom.weight || 1.0
-          const count = Math.round(weight * 10)
-          for (let i = 0; i < count; i++) {
-            characterPool.push({ id: custom.id, name: custom.name, isCustom: true })
-          }
-        }
+    // Build pool of available game challenges
+    let availableGameChallenges = []
+    if (store.gameChallengesEnabled) {
+      availableGameChallenges = ALL_GAME_CHALLENGES.filter(ch => {
+        if (!store.isGameChallengeTargeting(ch.id)) return false
+        if (checkCompletion && store.getGameChallengeCompletion(ch.id)) return false
+        return true
       })
     }
 
-    if (characterPool.length < numPlayers) {
-      throw new Error(`Not enough characters selected. Need at least ${numPlayers}.`)
+    // Total options: each objective + challenges as ONE option (if available)
+    const hasGameChallenges = availableGameChallenges.length > 0
+    const totalOptions = availableObjectives.length + (hasGameChallenges ? 1 : 0)
+
+    if (totalOptions === 0) {
+      throw new Error('No objectives or challenges available. Check your target config.')
     }
 
-    // Build objective pool
-    let objectivePool = buildWeightedArray(
-      OBJECTIVES,
-      store.objectiveWeights,
-      store.selectedObjectives
-    )
+    // Roll for what to do
+    const roll = randomInt(0, totalOptions - 1)
 
-    if (objectivePool.length === 0) {
-      throw new Error('No objectives selected.')
-    }
+    // Check if game challenge was selected
+    if (hasGameChallenges && roll === availableObjectives.length) {
+      // Game challenge selected!
+      const challengeIdx = randomInt(0, availableGameChallenges.length - 1)
+      const selectedChallenge = availableGameChallenges[challengeIdx]
 
-    // Select players
-    const selectedPlayers = []
-    let workingCharPool = [...characterPool]
-
-    for (let i = 0; i < numPlayers; i++) {
-      if (workingCharPool.length === 0) {
-        throw new Error('Ran out of available characters.')
+      const results = {
+        players: [],
+        objectives: [],
+        challenges: [],
+        gameChallenge: selectedChallenge
       }
 
-      const idx = randomInt(0, workingCharPool.length - 1)
-      const selected = workingCharPool[idx]
-      selectedPlayers.push(selected)
-
-      // Remove duplicates if option is enabled
-      if (noDuplicates) {
-        workingCharPool = workingCharPool.filter(c => c.id !== selected.id)
+      if (!skipSet) {
+        store.setResults(results)
       }
+
+      return results
     }
 
-    // Select objective
-    let workingObjPool = [...objectivePool]
+    // Objective selected - pick which one based on roll
+    const selectedObjective = availableObjectives[roll]
 
-    // Filter by completion if enabled (only for single player)
-    if (checkCompletion && selectedPlayers.length === 1) {
-      const charId = selectedPlayers[0].id
-      workingObjPool = workingObjPool.filter(obj => {
-        return !store.getCompletion(charId, obj.id)
-      })
+    // Find characters that have this objective targeted (and not completed)
+    const availableCharacters = ALL_CHARACTERS.filter(char => {
+      const isTargeted = store.isTargeting(char.id, selectedObjective.id)
+      if (!isTargeted) return false
+      if (checkCompletion && store.getCompletion(char.id, selectedObjective.id)) return false
+      return true
+    })
 
-      if (workingObjPool.length === 0) {
-        // All objectives completed for this character, use full pool
-        workingObjPool = [...objectivePool]
-      }
+    if (availableCharacters.length === 0) {
+      throw new Error('No characters available for this objective.')
     }
 
-    const objIdx = randomInt(0, workingObjPool.length - 1)
-    const selectedObjective = workingObjPool[objIdx]
+    // Pick random character
+    const charIdx = randomInt(0, availableCharacters.length - 1)
+    const selectedCharacter = availableCharacters[charIdx]
 
-    // Check for timed objective
-    let selectedTimedObjective = null
-    if (store.timedEnabled && store.selectedTimedObjectives.size > 0) {
-      const timedRoll = randomInt(1, 100)
-      if (timedRoll <= store.timedChance) {
-        const timedArray = TIMED_OBJECTIVES.filter(t =>
-          store.selectedTimedObjectives.has(t.id)
-        )
-        if (timedArray.length > 0) {
-          const timedIdx = randomInt(0, timedArray.length - 1)
-          selectedTimedObjective = { ...timedArray[timedIdx], isTimed: true }
-        }
-      }
-    }
-
-    // Select challenges
+    // Select extra challenges (restricciones)
     const selectedChallenges = []
     if (store.selectedChallenges.size > 0) {
-      const availableChallenges = CHALLENGES.filter(ch => {
+      const extraChallenges = CHALLENGES.filter(ch => {
         if (!store.selectedChallenges.has(ch.id)) return false
-
-        // Check incompatibilities
         const incompatible = CHALLENGE_INCOMPATIBILITIES[ch.id]
-        if (incompatible && incompatible.includes(selectedObjective.id)) {
-          return false
-        }
-
+        if (incompatible && incompatible.includes(selectedObjective.id)) return false
         return true
       })
 
-      // Roll for each challenge
-      availableChallenges.forEach(ch => {
-        const roll = randomInt(1, 100)
-        if (roll <= store.challengeChance) {
+      extraChallenges.forEach(ch => {
+        const chRoll = randomInt(1, 100)
+        if (chRoll <= store.challengeChance) {
           selectedChallenges.push(ch)
         }
       })
 
-      // Guarantee at least one if option is enabled
-      if (store.challengeEnabled && selectedChallenges.length === 0 && availableChallenges.length > 0) {
-        const idx = randomInt(0, availableChallenges.length - 1)
-        selectedChallenges.push(availableChallenges[idx])
+      if (store.challengeEnabled && selectedChallenges.length === 0 && extraChallenges.length > 0) {
+        const idx = randomInt(0, extraChallenges.length - 1)
+        selectedChallenges.push(extraChallenges[idx])
       }
     }
 
     // Build results
     const results = {
-      players: selectedPlayers.map(p => ({
-        id: p.id,
-        name: p.name,
-        isCustom: p.isCustom || false
-      })),
+      players: [{
+        id: selectedCharacter.id,
+        name: selectedCharacter.name,
+        isCustom: false
+      }],
       objectives: [selectedObjective],
-      challenges: selectedChallenges
-    }
-
-    if (selectedTimedObjective) {
-      results.objectives.push(selectedTimedObjective)
+      challenges: selectedChallenges,
+      gameChallenge: null
     }
 
     if (!skipSet) {
@@ -199,7 +176,13 @@ export function useRandomizer() {
   }
 
   function markCurrentAsComplete() {
-    const { players, objectives } = store.results
+    const { players, objectives, gameChallenge } = store.results
+
+    // If it's a game challenge, mark it as complete
+    if (gameChallenge) {
+      store.setGameChallengeCompletion(gameChallenge.id, true)
+      return
+    }
 
     if (players.length !== 1) return // Only for single player
 
@@ -216,6 +199,7 @@ export function useRandomizer() {
     markCurrentAsComplete,
     getCharacterById,
     getObjectiveById,
-    getChallengeById
+    getChallengeById,
+    getGameChallengeById
   }
 }

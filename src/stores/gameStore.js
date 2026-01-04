@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { ALL_CHARACTERS, OBJECTIVES, TIMED_OBJECTIVES, CHALLENGES, CUSTOM_CHARACTER_COUNT } from '@/constants/gameData'
+import { ALL_CHARACTERS, OBJECTIVES, TIMED_OBJECTIVES, CHALLENGES, ALL_GAME_CHALLENGES, CUSTOM_CHARACTER_COUNT } from '@/constants/gameData'
 
 export const useGameStore = defineStore('game', () => {
   // Chroma settings
@@ -55,6 +55,11 @@ export const useGameStore = defineStore('game', () => {
   // Completion targets - which objectives each character is targeting (all enabled by default)
   const completionTargets = ref({})
 
+  // Game challenges (official Isaac challenges)
+  const gameChallengesEnabled = ref(false)
+  const gameChallengeCompletion = ref({})
+  const gameChallengeTargets = ref({})
+
   // UI state
   const isRandomizing = ref(false)
   const isSpinning = ref(false)
@@ -68,7 +73,8 @@ export const useGameStore = defineStore('game', () => {
   const results = ref({
     players: [],
     objectives: [],
-    challenges: []
+    challenges: [],
+    gameChallenge: null
   })
 
   // Computed
@@ -212,12 +218,63 @@ export const useGameStore = defineStore('game', () => {
     })
   }
 
+  // Game challenge completion functions
+  function getGameChallengeCompletion(challengeId) {
+    return gameChallengeCompletion.value[challengeId] || false
+  }
+
+  function setGameChallengeCompletion(challengeId, completed) {
+    gameChallengeCompletion.value[challengeId] = completed
+  }
+
+  function isGameChallengeTargeting(challengeId) {
+    // Default is true (all challenges enabled by default)
+    return gameChallengeTargets.value[challengeId] !== false
+  }
+
+  function setGameChallengeTargeting(challengeId, targeting) {
+    gameChallengeTargets.value[challengeId] = targeting
+  }
+
+  function setAllGameChallengeTargets(targeting) {
+    ALL_GAME_CHALLENGES.forEach(ch => {
+      gameChallengeTargets.value[ch.id] = targeting
+    })
+  }
+
+  function applyPresetToTargets(preset) {
+    const allObjectives = [...OBJECTIVES, ...TIMED_OBJECTIVES]
+
+    // Build new targets object
+    const newTargets = {}
+
+    // First, disable all targets
+    ALL_CHARACTERS.forEach(char => {
+      allObjectives.forEach(obj => {
+        const key = `${char.id}_${obj.id}`
+        newTargets[key] = false
+      })
+    })
+
+    // Then, enable targets for the preset characters and objectives
+    const presetObjectives = [...preset.objectives, ...(preset.timedObjectives || [])]
+    preset.characters.forEach(charId => {
+      presetObjectives.forEach(objId => {
+        const key = `${charId}_${objId}`
+        newTargets[key] = true
+      })
+    })
+
+    // Replace entire object for reactivity
+    completionTargets.value = newTargets
+  }
+
   function setResults(newResults) {
     results.value = newResults
   }
 
   function clearResults() {
-    results.value = { players: [], objectives: [], challenges: [] }
+    results.value = { players: [], objectives: [], challenges: [], gameChallenge: null }
   }
 
   // Export state for localStorage
@@ -246,7 +303,10 @@ export const useGameStore = defineStore('game', () => {
       challengeChance: challengeChance.value,
       selectedChallenges: [...selectedChallenges.value],
       completion: completion.value,
-      completionTargets: completionTargets.value
+      completionTargets: completionTargets.value,
+      gameChallengesEnabled: gameChallengesEnabled.value,
+      gameChallengeCompletion: gameChallengeCompletion.value,
+      gameChallengeTargets: gameChallengeTargets.value
     }
   }
 
@@ -276,6 +336,9 @@ export const useGameStore = defineStore('game', () => {
     if (state.selectedChallenges) selectedChallenges.value = new Set(state.selectedChallenges)
     if (state.completion) completion.value = state.completion
     if (state.completionTargets) completionTargets.value = state.completionTargets
+    if (state.gameChallengesEnabled !== undefined) gameChallengesEnabled.value = state.gameChallengesEnabled
+    if (state.gameChallengeCompletion) gameChallengeCompletion.value = state.gameChallengeCompletion
+    if (state.gameChallengeTargets) gameChallengeTargets.value = state.gameChallengeTargets
   }
 
   return {
@@ -311,6 +374,10 @@ export const useGameStore = defineStore('game', () => {
     // Completion
     completion,
     completionTargets,
+    // Game challenges
+    gameChallengesEnabled,
+    gameChallengeCompletion,
+    gameChallengeTargets,
     // UI
     isRandomizing,
     isSpinning,
@@ -347,6 +414,12 @@ export const useGameStore = defineStore('game', () => {
     isTargeting,
     setTargeting,
     setAllTargetsForCharacter,
+    getGameChallengeCompletion,
+    setGameChallengeCompletion,
+    isGameChallengeTargeting,
+    setGameChallengeTargeting,
+    setAllGameChallengeTargets,
+    applyPresetToTargets,
     setResults,
     clearResults,
     exportState,
