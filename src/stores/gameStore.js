@@ -52,6 +52,8 @@ export const useGameStore = defineStore('game', () => {
 
   // Completion tracking
   const completion = ref({})
+  // Completion targets - which objectives each character is targeting (all enabled by default)
+  const completionTargets = ref({})
 
   // UI state
   const isRandomizing = ref(false)
@@ -191,6 +193,25 @@ export const useGameStore = defineStore('game', () => {
     return completion.value[key] || false
   }
 
+  function isTargeting(charId, goalId) {
+    const key = `${charId}_${goalId}`
+    // Default is true (all objectives enabled by default)
+    return completionTargets.value[key] !== false
+  }
+
+  function setTargeting(charId, goalId, targeting) {
+    const key = `${charId}_${goalId}`
+    completionTargets.value[key] = targeting
+  }
+
+  function setAllTargetsForCharacter(charId, targeting) {
+    const allObjectives = [...OBJECTIVES, ...TIMED_OBJECTIVES]
+    allObjectives.forEach(obj => {
+      const key = `${charId}_${obj.id}`
+      completionTargets.value[key] = targeting
+    })
+  }
+
   function setResults(newResults) {
     results.value = newResults
   }
@@ -224,7 +245,8 @@ export const useGameStore = defineStore('game', () => {
       challengeEnabled: challengeEnabled.value,
       challengeChance: challengeChance.value,
       selectedChallenges: [...selectedChallenges.value],
-      completion: completion.value
+      completion: completion.value,
+      completionTargets: completionTargets.value
     }
   }
 
@@ -253,6 +275,7 @@ export const useGameStore = defineStore('game', () => {
     if (state.challengeChance) challengeChance.value = state.challengeChance
     if (state.selectedChallenges) selectedChallenges.value = new Set(state.selectedChallenges)
     if (state.completion) completion.value = state.completion
+    if (state.completionTargets) completionTargets.value = state.completionTargets
   }
 
   return {
@@ -287,6 +310,7 @@ export const useGameStore = defineStore('game', () => {
     selectedChallenges,
     // Completion
     completion,
+    completionTargets,
     // UI
     isRandomizing,
     isSpinning,
@@ -320,6 +344,9 @@ export const useGameStore = defineStore('game', () => {
     applyPreset,
     setCompletion,
     getCompletion,
+    isTargeting,
+    setTargeting,
+    setAllTargetsForCharacter,
     setResults,
     clearResults,
     exportState,
