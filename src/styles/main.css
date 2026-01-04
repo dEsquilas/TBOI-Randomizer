@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+/* Isaac font */
+@font-face {
+  font-family: 'Upheaval';
+  src: url('/fonts/upheaval/upheavtt.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.font-isaac {
+  font-family: 'Upheaval', sans-serif;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;

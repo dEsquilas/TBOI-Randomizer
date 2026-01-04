@@ -60,6 +60,71 @@ export const TIMED_OBJECTIVES = [
   { id: 't2', name: 'Hush', icon: 'g9_icon.png', image: 'g9.png' }
 ]
 
+// Official game challenges (45 total)
+export const GAME_CHALLENGES = {
+  rebirth: [
+    { id: 'gc1', num: 1, name: 'Pitch Black' },
+    { id: 'gc2', num: 2, name: 'High Brow' },
+    { id: 'gc3', num: 3, name: 'Head Trauma' },
+    { id: 'gc4', num: 4, name: 'Darkness Falls' },
+    { id: 'gc5', num: 5, name: 'The Tank' },
+    { id: 'gc6', num: 6, name: 'Solar System' },
+    { id: 'gc7', num: 7, name: 'Suicide King' },
+    { id: 'gc8', num: 8, name: 'Cat Got Your Tongue' },
+    { id: 'gc9', num: 9, name: 'Demo Man' },
+    { id: 'gc10', num: 10, name: 'Cursed!' },
+    { id: 'gc11', num: 11, name: 'Glass Cannon' },
+    { id: 'gc12', num: 12, name: 'When Life Gives You Lemons' },
+    { id: 'gc13', num: 13, name: 'Beans!' },
+    { id: 'gc14', num: 14, name: "It's in the Cards" },
+    { id: 'gc15', num: 15, name: 'Slow Roll' },
+    { id: 'gc16', num: 16, name: 'Computer Savvy' },
+    { id: 'gc17', num: 17, name: 'Waka Waka' },
+    { id: 'gc18', num: 18, name: 'The Host' },
+    { id: 'gc19', num: 19, name: 'The Family Man' },
+    { id: 'gc20', num: 20, name: 'Purist' }
+  ],
+  afterbirth: [
+    { id: 'gc21', num: 21, name: 'XXXXXXXXL' },
+    { id: 'gc22', num: 22, name: 'SPEED!' },
+    { id: 'gc23', num: 23, name: 'Blue Bomber' },
+    { id: 'gc24', num: 24, name: 'PAY TO PLAY' },
+    { id: 'gc25', num: 25, name: 'Have a Heart' },
+    { id: 'gc26', num: 26, name: 'I RULE!' },
+    { id: 'gc27', num: 27, name: 'BRAINS!' },
+    { id: 'gc28', num: 28, name: 'PRIDE DAY!' },
+    { id: 'gc29', num: 29, name: "Onan's Streak" },
+    { id: 'gc30', num: 30, name: 'The Guardian' }
+  ],
+  afterbirthPlus: [
+    { id: 'gc31', num: 31, name: 'Backasswards' },
+    { id: 'gc32', num: 32, name: 'Aprils Fool' },
+    { id: 'gc33', num: 33, name: 'Pokey Mans' },
+    { id: 'gc34', num: 34, name: 'Ultra Hard' },
+    { id: 'gc35', num: 35, name: 'Pong' }
+  ],
+  repentance: [
+    { id: 'gc36', num: 36, name: 'Scat Man' },
+    { id: 'gc37', num: 37, name: 'Bloody Mary' },
+    { id: 'gc38', num: 38, name: 'Baptism by Fire' },
+    { id: 'gc39', num: 39, name: "Isaac's Awakening" },
+    { id: 'gc40', num: 40, name: 'Seeing Double' },
+    { id: 'gc41', num: 41, name: 'Pica Run' },
+    { id: 'gc42', num: 42, name: 'Hot Potato' },
+    { id: 'gc43', num: 43, name: 'Cantripped!' },
+    { id: 'gc44', num: 44, name: 'Red Redemption' },
+    { id: 'gc45', num: 45, name: 'DELETE THIS' }
+  ]
+}
+
+// All game challenges flat array
+export const ALL_GAME_CHALLENGES = [
+  ...GAME_CHALLENGES.rebirth,
+  ...GAME_CHALLENGES.afterbirth,
+  ...GAME_CHALLENGES.afterbirthPlus,
+  ...GAME_CHALLENGES.repentance
+]
+
 // Extra challenges
 export const CHALLENGES = [
   { id: 'ch1', name: 'No using consumables', icon: 'ch1.png' },
