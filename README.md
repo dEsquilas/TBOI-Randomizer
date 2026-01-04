@@ -1,38 +1,61 @@
-# vue-app
+# TBOI Randomizer
 
-This template should help get you started developing with Vue 3 in Vite.
+A randomizer for **The Binding of Isaac: Rebirth** and its DLCs. Randomly select characters, objectives, and challenges for your next run!
 
-## Recommended IDE Setup
+## Features
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Character + Objective Randomizer**: Get a random character and boss to defeat
+- **Game Challenges**: Includes all 45 official challenges (Rebirth through Repentance)
+- **Completion Tracker**: Track your progress across all characters and objectives
+- **Target Config**: Choose which character/objective combinations to include in randomization
+- **Presets**: Quick presets for different game versions (Rebirth, Afterbirth, Afterbirth+, Repentance)
+- **Extra Challenges**: Optional gameplay modifiers (no items, blindfolded, etc.)
+- **Stream-Friendly**: Multiple display modes including chroma key support
 
-## Recommended Browser Setup
+## Screenshots
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+![TBOI Randomizer](https://raw.githubusercontent.com/TRPG0/TBOI-Random-Generator/main/screenshot.png)
 
-## Customize configuration
+## Getting Started
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### Prerequisites
 
-## Project Setup
+- Node.js 18+
+- npm
 
-```sh
+### Installation
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+### Development
 
-```sh
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+### Build
 
-```sh
+```bash
 npm run build
 ```
+
+## Usage
+
+1. **Set up targets** (right panel): Choose which character/objective combinations you want to track
+2. **Use presets** (left panel): Quickly configure for your game version
+3. **Enable challenges** (optional): Toggle "Include game challenges" to add official challenges to the pool
+4. **Randomize!**: Click the button to get your next run
+
+## Credits
+
+This project is based on the original [TBOI-Random-Generator](https://github.com/TRPG0/TBOI-Random-Generator) by [TRPG0](https://github.com/TRPG0).
+
+The original project provided the core concept and assets. This version is a Vue.js rewrite with additional features like the completion tracker and game challenges support.
+
+## License
+
+This project is for personal use and is not affiliated with Edmund McMillen or Nicalis.
+
+The Binding of Isaac: Rebirth and all related content are property of Edmund McMillen and Nicalis.
