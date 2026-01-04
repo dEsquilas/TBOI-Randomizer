@@ -59,11 +59,13 @@ export function useRandomizer() {
 
   function randomize(skipSet = false) {
     const checkCompletion = store.completionCheck
-    const allObjectives = [...OBJECTIVES, ...TIMED_OBJECTIVES]
+    const timedAsExtra = store.timedAsExtra
 
     // Build pool of available objectives from targets (panel derecho)
-    // An objective is available if at least one character has it targeted (and not completed if checkCompletion)
-    const availableObjectives = allObjectives.filter(obj => {
+    // If timedAsExtra is true, only main objectives (Boss Rush/Hush are rolled separately)
+    // If timedAsExtra is false, include timed objectives in the main pool (original behavior)
+    const objectivePool = timedAsExtra ? OBJECTIVES : [...OBJECTIVES, ...TIMED_OBJECTIVES]
+    const availableObjectives = objectivePool.filter(obj => {
       // Check if any character has this objective targeted and not completed
       return ALL_CHARACTERS.some(char => {
         const isTargeted = store.isTargeting(char.id, obj.id)
@@ -103,6 +105,7 @@ export function useRandomizer() {
       const results = {
         players: [],
         objectives: [],
+        timedObjectives: [],
         challenges: [],
         gameChallenge: selectedChallenge
       }
@@ -156,6 +159,23 @@ export function useRandomizer() {
       }
     }
 
+    // Roll for timed objectives (Boss Rush, Hush) - only when timedAsExtra is enabled
+    const selectedTimedObjectives = []
+    if (timedAsExtra && store.timedEnabled) {
+      TIMED_OBJECTIVES.forEach(timedObj => {
+        // Check if this character has this timed objective targeted and not completed
+        const isTargeted = store.isTargeting(selectedCharacter.id, timedObj.id)
+        if (!isTargeted) return
+        if (checkCompletion && store.getCompletion(selectedCharacter.id, timedObj.id)) return
+
+        // Roll for this timed objective
+        const roll = randomInt(1, 100)
+        if (roll <= store.timedChance) {
+          selectedTimedObjectives.push(timedObj)
+        }
+      })
+    }
+
     // Build results
     const results = {
       players: [{
@@ -164,6 +184,7 @@ export function useRandomizer() {
         isCustom: false
       }],
       objectives: [selectedObjective],
+      timedObjectives: selectedTimedObjectives,
       challenges: selectedChallenges,
       gameChallenge: null
     }
@@ -176,7 +197,7 @@ export function useRandomizer() {
   }
 
   function markCurrentAsComplete() {
-    const { players, objectives, gameChallenge } = store.results
+    const { players, objectives, timedObjectives, gameChallenge } = store.results
 
     // If it's a game challenge, mark it as complete
     if (gameChallenge) {
@@ -192,6 +213,13 @@ export function useRandomizer() {
     objectives.forEach(obj => {
       store.setCompletion(charId, obj.id, true)
     })
+
+    // Also mark timed objectives as complete
+    if (timedObjectives) {
+      timedObjectives.forEach(obj => {
+        store.setCompletion(charId, obj.id, true)
+      })
+    }
   }
 
   return {
