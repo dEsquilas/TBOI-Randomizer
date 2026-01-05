@@ -36,6 +36,14 @@
   },
   {
     "rank": 5,
+    "name": "Kikthai",
+    "pb": 4,
+    "alive": false,
+    "proofUrl": "https://www.twitch.tv/kikthai",
+    "twitchUrl": "https://www.twitch.tv/kikthai"
+  },
+  {
+    "rank": 6,
     "name": "WatiLive",
     "pb": 3,
     "alive": true,
