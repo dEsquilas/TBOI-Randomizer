@@ -10,8 +10,9 @@
   {
     "rank": 2,
     "name": "WatiLive",
-    "pb": 20,
-    "alive": true,
+    "pb": 22,
+    "alive": false,
+    "deathUrl": "https://www.twitch.tv/watilive/clip/GlutenFreeRepleteElephantKeepo-OlR8I3EcivauqEoC",
     "proofUrl": "https://www.twitch.tv/watilive",
     "twitchUrl": "https://www.twitch.tv/watilive"
   },
@@ -30,6 +31,14 @@
     "pb": 5,
     "alive": false,
     "deathUrl": "https://www.twitch.tv/watilive/clip/RudeCooperativeSnoodFeelsBadMan-xz0mybjzjuRW8Zsk",
+    "proofUrl": "https://www.twitch.tv/watilive",
+    "twitchUrl": "https://www.twitch.tv/watilive"
+  },
+  {
+    "rank": 5,
+    "name": "WatiLive",
+    "pb": 3,
+    "alive": true,
     "proofUrl": "https://www.twitch.tv/watilive",
     "twitchUrl": "https://www.twitch.tv/watilive"
   }
