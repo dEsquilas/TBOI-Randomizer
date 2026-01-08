@@ -2,7 +2,7 @@
   {
     "rank": 1,
     "name": "crafterlynx",
-    "pb": 30,
+    "pb": 40,
     "alive": true,
     "proofUrl": "https://www.twitch.tv/crafterlynx",
     "twitchUrl": "https://www.twitch.tv/crafterlynx"
@@ -18,6 +18,31 @@
   },
   {
     "rank": 3,
+    "name": "WatiLive",
+    "pb": 7,
+    "alive": false,
+    "deathUrl": "https://www.twitch.tv/watilive/clip/TastyHedonisticKaleNinjaGrumpy-B0ES66j0fC7elb3L",
+    "proofUrl": "https://www.twitch.tv/watilive",
+    "twitchUrl": "https://www.twitch.tv/watilive"
+  },
+  {
+    "rank": 4,
+    "name": "Kikthai",
+    "pb": 7,
+    "alive": true,
+    "proofUrl": "https://www.twitch.tv/kikthai",
+    "twitchUrl": "https://www.twitch.tv/kikthai"
+  },
+  {
+    "rank": 5,
+    "name": "WatiLive",
+    "pb": 6,
+    "alive": true,
+    "proofUrl": "https://www.twitch.tv/watilive",
+    "twitchUrl": "https://www.twitch.tv/watilive"
+  },
+  {
+    "rank": 6,
     "name": "crafterlynx",
     "pb": 5,
     "alive": false,
@@ -26,7 +51,7 @@
     "twitchUrl": "https://www.twitch.tv/crafterlynx"
   },
   {
-    "rank": 4,
+    "rank": 7,
     "name": "WatiLive",
     "pb": 5,
     "alive": false,
@@ -35,20 +60,12 @@
     "twitchUrl": "https://www.twitch.tv/watilive"
   },
   {
-    "rank": 5,
+    "rank": 8,
     "name": "Kikthai",
     "pb": 4,
     "alive": false,
     "deathUrl": "https://www.twitch.tv/kikthai/clip/ComfortableCaringSwanDancingBanana-bihOwzJcmbOrL5jz",
     "proofUrl": "https://www.twitch.tv/kikthai",
     "twitchUrl": "https://www.twitch.tv/kikthai"
-  },
-  {
-    "rank": 6,
-    "name": "WatiLive",
-    "pb": 3,
-    "alive": true,
-    "proofUrl": "https://www.twitch.tv/watilive",
-    "twitchUrl": "https://www.twitch.tv/watilive"
   }
 ]
