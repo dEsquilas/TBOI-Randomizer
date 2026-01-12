@@ -2,8 +2,9 @@
   {
     "rank": 1,
     "name": "crafterlynx",
-    "pb": 40,
-    "alive": true,
+    "pb": 56,
+    "alive": false,
+    "deathUrl": "https://www.twitch.tv/crafterlynx/clip/CheerfulFaithfulAlpacaWTRuck-lOnZWnxoUEUqngEH",
     "proofUrl": "https://www.twitch.tv/crafterlynx",
     "twitchUrl": "https://www.twitch.tv/crafterlynx"
   },
@@ -36,7 +37,7 @@
   {
     "rank": 5,
     "name": "WatiLive",
-    "pb": 6,
+    "pb": 19,
     "alive": true,
     "proofUrl": "https://www.twitch.tv/watilive",
     "twitchUrl": "https://www.twitch.tv/watilive"
@@ -67,5 +68,13 @@
     "deathUrl": "https://www.twitch.tv/kikthai/clip/ComfortableCaringSwanDancingBanana-bihOwzJcmbOrL5jz",
     "proofUrl": "https://www.twitch.tv/kikthai",
     "twitchUrl": "https://www.twitch.tv/kikthai"
+  },
+  {
+    "rank": 9,
+    "name": "crafterlynx",
+    "pb": 3,
+    "alive": true,
+    "proofUrl": "https://www.twitch.tv/crafterlynx",
+    "twitchUrl": "https://www.twitch.tv/crafterlynx"
   }
 ]
