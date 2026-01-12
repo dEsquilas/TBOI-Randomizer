@@ -16,7 +16,12 @@ onMounted(async () => {
   }
 })
 
-const top7 = computed(() => leaderboard.value.slice(0, 7))
+const top7 = computed(() =>
+  [...leaderboard.value]
+    .sort((a, b) => b.pb - a.pb)
+    .slice(0, 7)
+    .map((entry, index) => ({ ...entry, rank: index + 1 }))
+)
 </script>
 
 <template>
