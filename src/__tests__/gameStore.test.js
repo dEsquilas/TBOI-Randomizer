@@ -314,4 +314,179 @@ describe('gameStore', () => {
       expect(Object.keys(store.objectiveStats)).toHaveLength(0)
     })
   })
+
+  describe('streak tracking', () => {
+    it('should have streak at 0 by default', () => {
+      const store = useGameStore()
+      expect(store.streak).toBe(0)
+      expect(store.streakPB).toBe(0)
+      expect(store.streakVisible).toBe(false)
+    })
+
+    it('should increment streak', () => {
+      const store = useGameStore()
+
+      store.incrementStreak()
+      expect(store.streak).toBe(1)
+
+      store.incrementStreak()
+      expect(store.streak).toBe(2)
+    })
+
+    it('should update PB when streak exceeds it', () => {
+      const store = useGameStore()
+
+      store.incrementStreak()
+      expect(store.streak).toBe(1)
+      expect(store.streakPB).toBe(1)
+
+      store.incrementStreak()
+      expect(store.streak).toBe(2)
+      expect(store.streakPB).toBe(2)
+
+      store.incrementStreak()
+      expect(store.streak).toBe(3)
+      expect(store.streakPB).toBe(3)
+    })
+
+    it('should decrement streak', () => {
+      const store = useGameStore()
+
+      store.incrementStreak()
+      store.incrementStreak()
+      expect(store.streak).toBe(2)
+
+      store.decrementStreak()
+      expect(store.streak).toBe(1)
+
+      store.decrementStreak()
+      expect(store.streak).toBe(0)
+    })
+
+    it('should not decrement streak below zero', () => {
+      const store = useGameStore()
+
+      store.decrementStreak()
+      expect(store.streak).toBe(0)
+
+      store.incrementStreak()
+      store.decrementStreak()
+      store.decrementStreak()
+      expect(store.streak).toBe(0)
+    })
+
+    it('should not update PB when streak is decremented', () => {
+      const store = useGameStore()
+
+      store.incrementStreak()
+      store.incrementStreak()
+      store.incrementStreak()
+      expect(store.streakPB).toBe(3)
+
+      store.decrementStreak()
+      expect(store.streak).toBe(2)
+      expect(store.streakPB).toBe(3) // PB stays at 3
+    })
+
+    it('should reset streak to zero', () => {
+      const store = useGameStore()
+
+      store.incrementStreak()
+      store.incrementStreak()
+      store.incrementStreak()
+      expect(store.streak).toBe(3)
+      expect(store.streakPB).toBe(3)
+
+      store.resetStreak()
+      expect(store.streak).toBe(0)
+      expect(store.streakPB).toBe(3) // PB is preserved
+    })
+
+    it('should increment PB manually', () => {
+      const store = useGameStore()
+
+      store.incrementPB()
+      expect(store.streakPB).toBe(1)
+
+      store.incrementPB()
+      expect(store.streakPB).toBe(2)
+    })
+
+    it('should decrement PB', () => {
+      const store = useGameStore()
+
+      store.incrementPB()
+      store.incrementPB()
+      expect(store.streakPB).toBe(2)
+
+      store.decrementPB()
+      expect(store.streakPB).toBe(1)
+    })
+
+    it('should not decrement PB below zero', () => {
+      const store = useGameStore()
+
+      store.decrementPB()
+      expect(store.streakPB).toBe(0)
+    })
+
+    it('should adjust streak when PB is decremented below current streak', () => {
+      const store = useGameStore()
+
+      store.incrementStreak()
+      store.incrementStreak()
+      store.incrementStreak()
+      expect(store.streak).toBe(3)
+      expect(store.streakPB).toBe(3)
+
+      store.decrementPB()
+      expect(store.streakPB).toBe(2)
+      expect(store.streak).toBe(2) // Streak adjusted to match PB
+
+      store.decrementPB()
+      expect(store.streakPB).toBe(1)
+      expect(store.streak).toBe(1)
+    })
+
+    it('should reset PB and streak together', () => {
+      const store = useGameStore()
+
+      store.incrementStreak()
+      store.incrementStreak()
+      store.incrementStreak()
+      expect(store.streak).toBe(3)
+      expect(store.streakPB).toBe(3)
+
+      store.resetPB()
+      expect(store.streak).toBe(0)
+      expect(store.streakPB).toBe(0)
+    })
+
+    it('should export and import streak settings correctly', () => {
+      const store = useGameStore()
+
+      store.incrementStreak()
+      store.incrementStreak()
+      store.incrementStreak()
+      store.resetStreak()
+      store.incrementStreak()
+      store.streakVisible = true
+
+      expect(store.streak).toBe(1)
+      expect(store.streakPB).toBe(3)
+      expect(store.streakVisible).toBe(true)
+
+      const exported = store.exportState()
+
+      // Create new store
+      setActivePinia(createPinia())
+      const newStore = useGameStore()
+
+      newStore.importState(exported)
+
+      expect(newStore.streak).toBe(1)
+      expect(newStore.streakPB).toBe(3)
+      expect(newStore.streakVisible).toBe(true)
+    })
+  })
 })
