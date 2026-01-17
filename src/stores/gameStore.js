@@ -65,6 +65,10 @@ export const useGameStore = defineStore('game', () => {
   const gameChallengeCompletion = ref({})
   const gameChallengeTargets = ref({})
 
+  // Stats tracking (how many times each character/objective has been rolled)
+  const characterStats = ref({})
+  const objectiveStats = ref({})
+
   // UI state
   const isRandomizing = ref(false)
   const isSpinning = ref(false)
@@ -283,6 +287,32 @@ export const useGameStore = defineStore('game', () => {
     results.value = { players: [], objectives: [], timedObjectives: [], challenges: [], gameChallenge: null }
   }
 
+  // Stats actions
+  function incrementCharacterStat(charId) {
+    characterStats.value[charId] = (characterStats.value[charId] || 0) + 1
+  }
+
+  function decrementCharacterStat(charId) {
+    if (characterStats.value[charId] > 0) {
+      characterStats.value[charId]--
+    }
+  }
+
+  function incrementObjectiveStat(objId) {
+    objectiveStats.value[objId] = (objectiveStats.value[objId] || 0) + 1
+  }
+
+  function decrementObjectiveStat(objId) {
+    if (objectiveStats.value[objId] > 0) {
+      objectiveStats.value[objId]--
+    }
+  }
+
+  function resetStats() {
+    characterStats.value = {}
+    objectiveStats.value = {}
+  }
+
   // Export state for localStorage
   function exportState() {
     return {
@@ -315,7 +345,9 @@ export const useGameStore = defineStore('game', () => {
       completionTargets: completionTargets.value,
       gameChallengesEnabled: gameChallengesEnabled.value,
       gameChallengeCompletion: gameChallengeCompletion.value,
-      gameChallengeTargets: gameChallengeTargets.value
+      gameChallengeTargets: gameChallengeTargets.value,
+      characterStats: characterStats.value,
+      objectiveStats: objectiveStats.value
     }
   }
 
@@ -351,6 +383,8 @@ export const useGameStore = defineStore('game', () => {
     if (state.gameChallengesEnabled !== undefined) gameChallengesEnabled.value = state.gameChallengesEnabled
     if (state.gameChallengeCompletion) gameChallengeCompletion.value = state.gameChallengeCompletion
     if (state.gameChallengeTargets) gameChallengeTargets.value = state.gameChallengeTargets
+    if (state.characterStats) characterStats.value = state.characterStats
+    if (state.objectiveStats) objectiveStats.value = state.objectiveStats
   }
 
   return {
@@ -394,6 +428,9 @@ export const useGameStore = defineStore('game', () => {
     gameChallengesEnabled,
     gameChallengeCompletion,
     gameChallengeTargets,
+    // Stats
+    characterStats,
+    objectiveStats,
     // UI
     isRandomizing,
     isSpinning,
@@ -438,6 +475,12 @@ export const useGameStore = defineStore('game', () => {
     applyPresetToTargets,
     setResults,
     clearResults,
+    // Stats actions
+    incrementCharacterStat,
+    decrementCharacterStat,
+    incrementObjectiveStat,
+    decrementObjectiveStat,
+    resetStats,
     exportState,
     importState
   }

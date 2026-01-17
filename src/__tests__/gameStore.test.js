@@ -186,5 +186,108 @@ describe('gameStore', () => {
       expect(newStore.numberPlayers).toBe(2)
       expect(newStore.selectedCharacters.has('c1')).toBe(false)
     })
+
+    it('should export and import stats correctly', () => {
+      const store = useGameStore()
+
+      store.incrementCharacterStat('c1')
+      store.incrementCharacterStat('c1')
+      store.incrementObjectiveStat('g1')
+
+      const exported = store.exportState()
+
+      // Create new store
+      setActivePinia(createPinia())
+      const newStore = useGameStore()
+
+      newStore.importState(exported)
+
+      expect(newStore.characterStats['c1']).toBe(2)
+      expect(newStore.objectiveStats['g1']).toBe(1)
+    })
+  })
+
+  describe('stats tracking', () => {
+    it('should have empty stats by default', () => {
+      const store = useGameStore()
+      expect(Object.keys(store.characterStats)).toHaveLength(0)
+      expect(Object.keys(store.objectiveStats)).toHaveLength(0)
+    })
+
+    it('should increment character stat', () => {
+      const store = useGameStore()
+
+      store.incrementCharacterStat('c1')
+      expect(store.characterStats['c1']).toBe(1)
+
+      store.incrementCharacterStat('c1')
+      expect(store.characterStats['c1']).toBe(2)
+
+      store.incrementCharacterStat('c2')
+      expect(store.characterStats['c2']).toBe(1)
+    })
+
+    it('should decrement character stat', () => {
+      const store = useGameStore()
+
+      store.incrementCharacterStat('c1')
+      store.incrementCharacterStat('c1')
+      expect(store.characterStats['c1']).toBe(2)
+
+      store.decrementCharacterStat('c1')
+      expect(store.characterStats['c1']).toBe(1)
+
+      store.decrementCharacterStat('c1')
+      expect(store.characterStats['c1']).toBe(0)
+    })
+
+    it('should not decrement below zero', () => {
+      const store = useGameStore()
+
+      store.decrementCharacterStat('c1')
+      expect(store.characterStats['c1']).toBeUndefined()
+
+      store.incrementCharacterStat('c1')
+      store.decrementCharacterStat('c1')
+      store.decrementCharacterStat('c1')
+      expect(store.characterStats['c1']).toBe(0)
+    })
+
+    it('should increment objective stat', () => {
+      const store = useGameStore()
+
+      store.incrementObjectiveStat('g1')
+      expect(store.objectiveStats['g1']).toBe(1)
+
+      store.incrementObjectiveStat('g1')
+      expect(store.objectiveStats['g1']).toBe(2)
+
+      store.incrementObjectiveStat('t1')
+      expect(store.objectiveStats['t1']).toBe(1)
+    })
+
+    it('should decrement objective stat', () => {
+      const store = useGameStore()
+
+      store.incrementObjectiveStat('g1')
+      store.incrementObjectiveStat('g1')
+      store.decrementObjectiveStat('g1')
+
+      expect(store.objectiveStats['g1']).toBe(1)
+    })
+
+    it('should reset all stats', () => {
+      const store = useGameStore()
+
+      store.incrementCharacterStat('c1')
+      store.incrementCharacterStat('c2')
+      store.incrementObjectiveStat('g1')
+      store.incrementObjectiveStat('t1')
+
+      store.resetStats()
+
+      expect(Object.keys(store.characterStats)).toHaveLength(0)
+      expect(Object.keys(store.objectiveStats)).toHaveLength(0)
+    })
   })
 })

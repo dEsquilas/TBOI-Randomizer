@@ -274,4 +274,129 @@ describe('useRandomizer', () => {
       expect(challenge.name).toBe('No using consumables')
     })
   })
+
+  describe('stats tracking', () => {
+    it('should increment character stat on randomize', () => {
+      const store = useGameStore()
+      const { randomize } = useRandomizer()
+
+      // Disable all targets except c1 + g1
+      ALL_CHARACTERS.forEach(char => {
+        OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+        TIMED_OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+      })
+      store.setTargeting('c1', 'g1', true)
+      store.timedAsExtra = true
+
+      randomize()
+
+      expect(store.characterStats['c1']).toBe(1)
+    })
+
+    it('should increment objective stat on randomize', () => {
+      const store = useGameStore()
+      const { randomize } = useRandomizer()
+
+      // Disable all targets except c1 + g1
+      ALL_CHARACTERS.forEach(char => {
+        OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+        TIMED_OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+      })
+      store.setTargeting('c1', 'g1', true)
+      store.timedAsExtra = true
+
+      randomize()
+
+      expect(store.objectiveStats['g1']).toBe(1)
+    })
+
+    it('should increment timed objective stats when rolled as extra', () => {
+      const store = useGameStore()
+      const { randomize } = useRandomizer()
+
+      // Disable all targets except c1 + g1 + t1 + t2
+      ALL_CHARACTERS.forEach(char => {
+        OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+        TIMED_OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+      })
+      store.setTargeting('c1', 'g1', true)
+      store.setTargeting('c1', 't1', true)
+      store.setTargeting('c1', 't2', true)
+
+      store.timedAsExtra = true
+      store.timedEnabled = true
+      store.timedChance = 100 // Guarantee timed objectives
+
+      // Run multiple times to ensure timed objectives are tracked
+      for (let i = 0; i < 5; i++) {
+        randomize()
+      }
+
+      // Main objective should always be incremented
+      expect(store.objectiveStats['g1']).toBe(5)
+
+      // Timed objectives should have some increments (with 100% chance)
+      const timedTotal = (store.objectiveStats['t1'] || 0) + (store.objectiveStats['t2'] || 0)
+      expect(timedTotal).toBeGreaterThan(0)
+    })
+
+    it('should increment stats even with skipSet=true', () => {
+      const store = useGameStore()
+      const { randomize } = useRandomizer()
+
+      // Disable all targets except c1 + g1
+      ALL_CHARACTERS.forEach(char => {
+        OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+        TIMED_OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+      })
+      store.setTargeting('c1', 'g1', true)
+      store.timedAsExtra = true
+
+      // Call with skipSet=true (like RandomizeButton does for animation)
+      randomize(true)
+
+      expect(store.characterStats['c1']).toBe(1)
+      expect(store.objectiveStats['g1']).toBe(1)
+    })
+
+    it('should accumulate stats over multiple randomizations', () => {
+      const store = useGameStore()
+      const { randomize } = useRandomizer()
+
+      // Disable all targets except c1 + g1
+      ALL_CHARACTERS.forEach(char => {
+        OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+        TIMED_OBJECTIVES.forEach(obj => {
+          store.setTargeting(char.id, obj.id, false)
+        })
+      })
+      store.setTargeting('c1', 'g1', true)
+      store.timedAsExtra = true
+
+      randomize()
+      randomize()
+      randomize()
+
+      expect(store.characterStats['c1']).toBe(3)
+      expect(store.objectiveStats['g1']).toBe(3)
+    })
+  })
 })

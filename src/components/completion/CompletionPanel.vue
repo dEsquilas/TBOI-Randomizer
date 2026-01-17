@@ -1,11 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
 import { CHARACTERS, OBJECTIVES, TIMED_OBJECTIVES, GAME_CHALLENGES, ALL_GAME_CHALLENGES } from '@/constants/gameData'
 
 const store = useGameStore()
 
-const activeTab = ref('tracker') // 'tracker' | 'config'
+const activeTab = ref('tracker') // 'tracker' | 'config' | 'stats'
 
 const allObjectives = [...OBJECTIVES, ...TIMED_OBJECTIVES]
 const allCharacters = [...CHARACTERS.normal, ...CHARACTERS.tainted]
@@ -136,6 +136,62 @@ function toggleAllChallengeTargets() {
     store.setAllGameChallengeTargets(true)
   }
 }
+
+// Stats functions
+const showAddRun = ref(false)
+const showStatButtons = ref(false)
+const manualCharacter = ref('')
+const manualObjective = ref('')
+const manualBossRush = ref(false)
+const manualHush = ref(false)
+
+function addManualRun() {
+  if (!manualCharacter.value || !manualObjective.value) return
+
+  store.incrementCharacterStat(manualCharacter.value)
+  store.incrementObjectiveStat(manualObjective.value)
+
+  if (manualBossRush.value) {
+    store.incrementObjectiveStat('t1') // Boss Rush
+  }
+  if (manualHush.value) {
+    store.incrementObjectiveStat('t2') // Hush
+  }
+
+  // Reset form
+  manualCharacter.value = ''
+  manualObjective.value = ''
+  manualBossRush.value = false
+  manualHush.value = false
+}
+
+const sortedCharacterStats = computed(() => {
+  return allCharacters
+    .map(char => ({
+      ...char,
+      count: store.characterStats[char.id] || 0
+    }))
+    .filter(char => char.count > 0)
+    .sort((a, b) => b.count - a.count)
+})
+
+const sortedObjectiveStats = computed(() => {
+  return allObjectives
+    .map(obj => ({
+      ...obj,
+      count: store.objectiveStats[obj.id] || 0
+    }))
+    .filter(obj => obj.count > 0)
+    .sort((a, b) => b.count - a.count)
+})
+
+function getTotalCharacterRolls() {
+  return Object.values(store.characterStats).reduce((sum, count) => sum + count, 0)
+}
+
+function getTotalObjectiveRolls() {
+  return Object.values(store.objectiveStats).reduce((sum, count) => sum + count, 0)
+}
 </script>
 
 <template>
@@ -156,6 +212,13 @@ function toggleAllChallengeTargets() {
           :class="activeTab === 'config' ? 'bg-gray-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'"
         >
           Config
+        </button>
+        <button
+          @click="activeTab = 'stats'"
+          class="px-3 py-1 text-sm rounded transition-colors"
+          :class="activeTab === 'stats' ? 'bg-gray-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'"
+        >
+          Stats
         </button>
       </div>
 
@@ -548,6 +611,190 @@ function toggleAllChallengeTargets() {
             </div>
           </div>
         </template>
+      </div>
+
+      <!-- Stats Tab -->
+      <div v-if="activeTab === 'stats'">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-lg font-bold">Roll Stats</h2>
+          <button
+            @click="showStatButtons = !showStatButtons"
+            class="px-2 py-1 text-xs rounded transition-colors"
+            :class="showStatButtons ? 'bg-blue-600' : 'bg-gray-700 hover:bg-gray-600'"
+          >
+            +/-
+          </button>
+        </div>
+
+        <!-- Character Stats -->
+        <div class="mb-6">
+          <h3 class="text-sm font-semibold text-gray-400 mb-2">
+            Characters
+            <span class="text-xs font-normal">({{ getTotalCharacterRolls() }} rolls)</span>
+          </h3>
+
+          <div v-if="sortedCharacterStats.length === 0" class="text-gray-500 text-sm">
+            No characters rolled yet
+          </div>
+
+          <div class="space-y-1">
+            <div
+              v-for="(char, index) in sortedCharacterStats"
+              :key="char.id"
+              class="flex items-center gap-2"
+            >
+              <span class="w-6 text-xs text-gray-500 text-right">{{ index + 1 }}.</span>
+              <span class="flex-1 text-sm truncate" :title="char.name">
+                {{ char.name.replace('Tainted ', 'T. ') }}
+              </span>
+              <span class="w-8 text-sm text-right font-mono">{{ char.count }}</span>
+              <div v-if="showStatButtons" class="flex gap-1">
+                <button
+                  @click="store.incrementCharacterStat(char.id)"
+                  class="w-6 h-6 bg-green-700 hover:bg-green-600 rounded text-xs transition-colors"
+                >
+                  +
+                </button>
+                <button
+                  @click="store.decrementCharacterStat(char.id)"
+                  class="w-6 h-6 bg-red-700 hover:bg-red-600 rounded text-xs transition-colors"
+                >
+                  -
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-gray-600 my-4" />
+
+        <!-- Objective Stats -->
+        <div class="mb-6">
+          <h3 class="text-sm font-semibold text-gray-400 mb-2">
+            Objectives
+            <span class="text-xs font-normal">({{ getTotalObjectiveRolls() }} rolls)</span>
+          </h3>
+
+          <div v-if="sortedObjectiveStats.length === 0" class="text-gray-500 text-sm">
+            No objectives rolled yet
+          </div>
+
+          <div class="space-y-1">
+            <div
+              v-for="(obj, index) in sortedObjectiveStats"
+              :key="obj.id"
+              class="flex items-center gap-2"
+            >
+              <span class="w-6 text-xs text-gray-500 text-right">{{ index + 1 }}.</span>
+              <img
+                :src="`/img/${obj.icon}`"
+                :alt="obj.name"
+                class="w-4 h-4 object-contain"
+              />
+              <span class="flex-1 text-sm truncate" :title="obj.name">
+                {{ obj.name }}
+              </span>
+              <span class="w-8 text-sm text-right font-mono">{{ obj.count }}</span>
+              <div v-if="showStatButtons" class="flex gap-1">
+                <button
+                  @click="store.incrementObjectiveStat(obj.id)"
+                  class="w-6 h-6 bg-green-700 hover:bg-green-600 rounded text-xs transition-colors"
+                >
+                  +
+                </button>
+                <button
+                  @click="store.decrementObjectiveStat(obj.id)"
+                  class="w-6 h-6 bg-red-700 hover:bg-red-600 rounded text-xs transition-colors"
+                >
+                  -
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="border-gray-600 my-4" />
+
+        <!-- Add Manual Run -->
+        <div class="mb-4">
+          <button
+            @click="showAddRun = !showAddRun"
+            class="text-sm font-semibold text-gray-400 mb-2 flex items-center gap-2 hover:text-gray-300 transition-colors"
+          >
+            <span>{{ showAddRun ? '▼' : '▶' }}</span>
+            Add Run
+          </button>
+
+          <div v-if="showAddRun" class="space-y-2">
+            <!-- Character Select -->
+            <select
+              v-model="manualCharacter"
+              class="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-sm"
+            >
+              <option value="">Select character...</option>
+              <optgroup label="Normal">
+                <option v-for="char in CHARACTERS.normal" :key="char.id" :value="char.id">
+                  {{ char.name }}
+                </option>
+              </optgroup>
+              <optgroup label="Tainted">
+                <option v-for="char in CHARACTERS.tainted" :key="char.id" :value="char.id">
+                  {{ char.name }}
+                </option>
+              </optgroup>
+            </select>
+
+            <!-- Objective Select -->
+            <select
+              v-model="manualObjective"
+              class="w-full bg-gray-800 border border-gray-600 rounded px-2 py-1 text-sm"
+            >
+              <option value="">Select objective...</option>
+              <option v-for="obj in OBJECTIVES" :key="obj.id" :value="obj.id">
+                {{ obj.name }}
+              </option>
+            </select>
+
+            <!-- Timed Objectives -->
+            <div class="flex gap-4">
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  v-model="manualBossRush"
+                  class="accent-blue-600"
+                />
+                <span class="text-sm">Boss Rush</span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  v-model="manualHush"
+                  class="accent-blue-600"
+                />
+                <span class="text-sm">Hush</span>
+              </label>
+            </div>
+
+            <!-- Add Button -->
+            <button
+              @click="addManualRun"
+              :disabled="!manualCharacter || !manualObjective"
+              class="w-full py-1.5 bg-blue-700 hover:bg-blue-600 disabled:bg-gray-700 disabled:cursor-not-allowed rounded text-sm transition-colors"
+            >
+              Add Run
+            </button>
+          </div>
+        </div>
+
+        <hr class="border-gray-600 my-4" />
+
+        <!-- Reset Button -->
+        <button
+          @click="store.resetStats()"
+          class="w-full py-2 bg-red-700 hover:bg-red-600 rounded text-sm transition-colors"
+        >
+          Reset Stats
+        </button>
       </div>
     </div>
   </div>

@@ -189,6 +189,13 @@ export function useRandomizer() {
       gameChallenge: null
     }
 
+    // Track stats (always, regardless of skipSet)
+    store.incrementCharacterStat(selectedCharacter.id)
+    store.incrementObjectiveStat(selectedObjective.id)
+    selectedTimedObjectives.forEach(obj => {
+      store.incrementObjectiveStat(obj.id)
+    })
+
     if (!skipSet) {
       store.setResults(results)
     }
