@@ -73,8 +73,7 @@ const objectiveScale = computed({
           />
           <span class="text-sm">Textual End</span>
         </label>
-        <!-- Text color picker (only when enabled) -->
-        <div v-if="store.textualEndEnabled" class="mt-2 ml-6 flex items-center gap-2">
+        <div class="mt-2 ml-6 flex items-center gap-2">
           <label class="text-sm">Text color:</label>
           <input
             type="color"
@@ -96,6 +95,16 @@ const objectiveScale = computed({
           />
           <span class="text-sm">Streak Display</span>
         </label>
+        <div class="mt-2 ml-6 flex items-center gap-2">
+          <label class="text-sm">Text color:</label>
+          <input
+            type="color"
+            :value="`#${store.streakTextColor}`"
+            @input="store.streakTextColor = $event.target.value.slice(1)"
+            class="w-8 h-6 cursor-pointer border border-gray-500 rounded"
+          />
+          <span class="text-xs text-gray-400">#{{ store.streakTextColor.toUpperCase() }}</span>
+        </div>
 
         <!-- Streak Controls -->
         <div class="mt-2 ml-6 space-y-2">

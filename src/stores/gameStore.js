@@ -80,6 +80,7 @@ export const useGameStore = defineStore('game', () => {
   const streak = ref(0)
   const streakPB = ref(0)
   const streakVisible = ref(false)
+  const streakTextColor = ref('FFFFFF')
 
   // Spinning animation state
   const spinningPlayers = ref([])
@@ -396,7 +397,8 @@ export const useGameStore = defineStore('game', () => {
       textualEndTextColor: textualEndTextColor.value,
       streak: streak.value,
       streakPB: streakPB.value,
-      streakVisible: streakVisible.value
+      streakVisible: streakVisible.value,
+      streakTextColor: streakTextColor.value
     }
   }
 
@@ -439,6 +441,7 @@ export const useGameStore = defineStore('game', () => {
     if (state.streak !== undefined) streak.value = state.streak
     if (state.streakPB !== undefined) streakPB.value = state.streakPB
     if (state.streakVisible !== undefined) streakVisible.value = state.streakVisible
+    if (state.streakTextColor) streakTextColor.value = state.streakTextColor
   }
 
   return {
@@ -541,6 +544,7 @@ export const useGameStore = defineStore('game', () => {
     streak,
     streakPB,
     streakVisible,
+    streakTextColor,
     incrementStreak,
     decrementStreak,
     resetStreak,

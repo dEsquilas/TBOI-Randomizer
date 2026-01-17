@@ -110,7 +110,8 @@ function handleError(message) {
       <!-- Streak Display (visual only, config in sidebar) -->
       <div
         v-if="store.streakVisible"
-        class="font-isaac text-2xl text-white drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+        class="font-isaac text-2xl drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+        :style="{ color: `#${store.streakTextColor}` }"
       >
         PB: {{ store.streakPB }} | Streak: {{ store.streak }}
       </div>
