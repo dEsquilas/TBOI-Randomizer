@@ -1,60 +1,31 @@
 <script setup>
-import { ref, watch } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
 
 const store = useGameStore()
-
-const textColor = ref(store.chromaTextColor)
-const bgColor = ref(store.chromaBgColor)
-
-function applyTextColor() {
-  if (/^[0-9A-Fa-f]{6}$/.test(textColor.value)) {
-    store.chromaTextColor = textColor.value.toUpperCase()
-  }
-}
-
-function applyBgColor() {
-  if (/^[0-9A-Fa-f]{6}$/.test(bgColor.value)) {
-    store.chromaBgColor = bgColor.value.toUpperCase()
-  }
-}
-
-watch(() => store.chromaTextColor, (val) => { textColor.value = val })
-watch(() => store.chromaBgColor, (val) => { bgColor.value = val })
 </script>
 
 <template>
   <div class="mb-4 space-y-3">
-    <div class="flex flex-wrap items-center gap-2">
-      <label for="chromaText" class="min-w-[140px]">Text color (Hex):</label>
+    <div class="flex items-center gap-2">
+      <label class="text-sm">Text color:</label>
       <input
-        type="text"
-        id="chromaText"
-        v-model="textColor"
-        maxlength="6"
-        placeholder="FFFFFF"
-        class="w-20 px-2 py-1 bg-gray-800 border border-gray-600 rounded font-mono text-sm"
+        type="color"
+        :value="`#${store.chromaTextColor}`"
+        @input="store.chromaTextColor = $event.target.value.slice(1).toUpperCase()"
+        class="w-8 h-6 cursor-pointer border border-gray-500 rounded"
       />
-      <button @click="applyTextColor" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded text-sm">
-        Apply
-      </button>
-      <span class="text-xs text-gray-500">Default: #FFFFFF</span>
+      <span class="text-xs text-gray-400">#{{ store.chromaTextColor }}</span>
     </div>
 
-    <div class="flex flex-wrap items-center gap-2">
-      <label for="chromaBG" class="min-w-[140px]">Background (Hex):</label>
+    <div class="flex items-center gap-2">
+      <label class="text-sm">Background:</label>
       <input
-        type="text"
-        id="chromaBG"
-        v-model="bgColor"
-        maxlength="6"
-        placeholder="00FF00"
-        class="w-20 px-2 py-1 bg-gray-800 border border-gray-600 rounded font-mono text-sm"
+        type="color"
+        :value="`#${store.chromaBgColor}`"
+        @input="store.chromaBgColor = $event.target.value.slice(1).toUpperCase()"
+        class="w-8 h-6 cursor-pointer border border-gray-500 rounded"
       />
-      <button @click="applyBgColor" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded text-sm">
-        Apply
-      </button>
-      <span class="text-xs text-gray-500">Default: #00FF00</span>
+      <span class="text-xs text-gray-400">#{{ store.chromaBgColor }}</span>
     </div>
 
     <p class="text-xs text-gray-500">
