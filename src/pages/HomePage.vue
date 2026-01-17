@@ -107,6 +107,14 @@ function handleError(message) {
         </button>
       </div>
 
+      <!-- Streak Display (visual only, config in sidebar) -->
+      <div
+        v-if="store.streakVisible"
+        class="font-isaac text-2xl text-white drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+      >
+        PB: {{ store.streakPB }} | Streak: {{ store.streak }}
+      </div>
+
     </main>
 
     <!-- Completion Panel (right side) -->

@@ -86,6 +86,63 @@ const objectiveScale = computed({
         </div>
       </div>
 
+      <!-- Streak Display Option -->
+      <div class="mb-4">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            v-model="store.streakVisible"
+            class="cursor-pointer"
+          />
+          <span class="text-sm">Streak Display</span>
+        </label>
+
+        <!-- Streak Controls -->
+        <div class="mt-2 ml-6 space-y-2">
+          <div class="flex gap-4">
+            <!-- Streak -->
+            <div class="flex items-center gap-1">
+              <span class="text-xs text-gray-400 w-10">Streak:</span>
+              <button
+                @click="store.decrementStreak()"
+                class="w-6 h-6 bg-red-700 hover:bg-red-600 text-white rounded text-xs transition-colors"
+              >-</button>
+              <span class="w-6 text-center text-sm font-mono">{{ store.streak }}</span>
+              <button
+                @click="store.incrementStreak()"
+                class="w-6 h-6 bg-green-700 hover:bg-green-600 text-white rounded text-xs transition-colors"
+              >+</button>
+            </div>
+
+            <!-- PB -->
+            <div class="flex items-center gap-1">
+              <span class="text-xs text-gray-400 w-6">PB:</span>
+              <button
+                @click="store.decrementPB()"
+                class="w-6 h-6 bg-red-700 hover:bg-red-600 text-white rounded text-xs transition-colors"
+              >-</button>
+              <span class="w-6 text-center text-sm font-mono">{{ store.streakPB }}</span>
+              <button
+                @click="store.incrementPB()"
+                class="w-6 h-6 bg-green-700 hover:bg-green-600 text-white rounded text-xs transition-colors"
+              >+</button>
+            </div>
+          </div>
+
+          <!-- Reset Buttons -->
+          <div class="flex gap-2">
+            <button
+              @click="store.resetStreak()"
+              class="px-2 py-0.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors"
+            >Reset Streak</button>
+            <button
+              @click="store.resetPB()"
+              class="px-2 py-0.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs transition-colors"
+            >Reset PB</button>
+          </div>
+        </div>
+      </div>
+
       <hr class="border-gray-600 my-4" />
       <PresetButtons />
 
