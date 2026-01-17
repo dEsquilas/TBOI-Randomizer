@@ -63,6 +63,29 @@ const objectiveScale = computed({
         </div>
       </div>
 
+      <!-- Textual End Option -->
+      <div class="mb-4">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            v-model="store.textualEndEnabled"
+            class="cursor-pointer"
+          />
+          <span class="text-sm">Textual End</span>
+        </label>
+        <!-- Text color picker (only when enabled) -->
+        <div v-if="store.textualEndEnabled" class="mt-2 ml-6 flex items-center gap-2">
+          <label class="text-sm">Text color:</label>
+          <input
+            type="color"
+            :value="`#${store.textualEndTextColor}`"
+            @input="store.textualEndTextColor = $event.target.value.slice(1)"
+            class="w-8 h-6 cursor-pointer border border-gray-500 rounded"
+          />
+          <span class="text-xs text-gray-400">#{{ store.textualEndTextColor.toUpperCase() }}</span>
+        </div>
+      </div>
+
       <hr class="border-gray-600 my-4" />
       <PresetButtons />
 

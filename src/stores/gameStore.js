@@ -73,6 +73,8 @@ export const useGameStore = defineStore('game', () => {
   const isRandomizing = ref(false)
   const isSpinning = ref(false)
   const optionsPanelOpen = ref(false)
+  const textualEndEnabled = ref(false)
+  const textualEndTextColor = ref('FFFFFF')
 
   // Spinning animation state
   const spinningPlayers = ref([])
@@ -347,7 +349,9 @@ export const useGameStore = defineStore('game', () => {
       gameChallengeCompletion: gameChallengeCompletion.value,
       gameChallengeTargets: gameChallengeTargets.value,
       characterStats: characterStats.value,
-      objectiveStats: objectiveStats.value
+      objectiveStats: objectiveStats.value,
+      textualEndEnabled: textualEndEnabled.value,
+      textualEndTextColor: textualEndTextColor.value
     }
   }
 
@@ -385,6 +389,8 @@ export const useGameStore = defineStore('game', () => {
     if (state.gameChallengeTargets) gameChallengeTargets.value = state.gameChallengeTargets
     if (state.characterStats) characterStats.value = state.characterStats
     if (state.objectiveStats) objectiveStats.value = state.objectiveStats
+    if (state.textualEndEnabled !== undefined) textualEndEnabled.value = state.textualEndEnabled
+    if (state.textualEndTextColor) textualEndTextColor.value = state.textualEndTextColor
   }
 
   return {
@@ -435,6 +441,8 @@ export const useGameStore = defineStore('game', () => {
     isRandomizing,
     isSpinning,
     optionsPanelOpen,
+    textualEndEnabled,
+    textualEndTextColor,
     // Spinning
     spinningPlayers,
     spinningObjectives,

@@ -18,6 +18,22 @@ const { markCurrentAsComplete } = useRandomizer()
 const bgColor = computed(() => `#${store.chromaBgColor}`)
 const chromaStyle = computed(() => store.chromaStyle)
 const isGameChallenge = computed(() => !!store.results.gameChallenge)
+
+// Textual End display computed properties
+const hasTextualContent = computed(() => store.results.players.length > 0)
+const displayPlayerName = computed(() => {
+  if (store.isSpinning && store.spinningPlayers.length > 0) {
+    return store.spinningPlayers[0]?.name || ''
+  }
+  return store.results.players[0]?.name || ''
+})
+const displayObjectiveName = computed(() => {
+  if (store.isSpinning && store.spinningObjectives.length > 0) {
+    return store.spinningObjectives[0]?.name || ''
+  }
+  return store.results.objectives[0]?.name || ''
+})
+
 const canMarkComplete = computed(() => {
   // Can mark game challenge as complete
   if (isGameChallenge.value) return true
@@ -52,6 +68,25 @@ function handleError(message) {
         <SimpleDisplayA v-else-if="chromaStyle === 'simpleA'" />
         <SimpleDisplayB v-else-if="chromaStyle === 'simpleB'" />
         <PlainTextDisplay v-else-if="chromaStyle === 'plainText'" />
+      </div>
+
+      <!-- Textual End Display -->
+      <div
+        v-if="store.textualEndEnabled && !store.results.gameChallenge"
+        class="flex flex-col items-center"
+      >
+        <p
+          class="font-isaac text-2xl text-center drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+          :style="{ color: `#${store.textualEndTextColor}` }"
+        >
+          {{ displayPlayerName || '?' }}
+        </p>
+        <p
+          class="font-isaac text-2xl text-center drop-shadow-[2px_2px_0px_rgba(0,0,0,1)]"
+          :style="{ color: `#${store.textualEndTextColor}` }"
+        >
+          {{ displayObjectiveName || '?' }}
+        </p>
       </div>
 
       <!-- Randomize Button -->

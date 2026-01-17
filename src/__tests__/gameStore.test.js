@@ -30,6 +30,12 @@ describe('gameStore', () => {
       const store = useGameStore()
       expect(store.numberPlayers).toBe(1)
     })
+
+    it('should have textual end disabled by default', () => {
+      const store = useGameStore()
+      expect(store.textualEndEnabled).toBe(false)
+      expect(store.textualEndTextColor).toBe('FFFFFF')
+    })
   })
 
   describe('character actions', () => {
@@ -204,6 +210,24 @@ describe('gameStore', () => {
 
       expect(newStore.characterStats['c1']).toBe(2)
       expect(newStore.objectiveStats['g1']).toBe(1)
+    })
+
+    it('should export and import textual end settings correctly', () => {
+      const store = useGameStore()
+
+      store.textualEndEnabled = true
+      store.textualEndTextColor = 'FF0000'
+
+      const exported = store.exportState()
+
+      // Create new store
+      setActivePinia(createPinia())
+      const newStore = useGameStore()
+
+      newStore.importState(exported)
+
+      expect(newStore.textualEndEnabled).toBe(true)
+      expect(newStore.textualEndTextColor).toBe('FF0000')
     })
   })
 

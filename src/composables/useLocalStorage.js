@@ -2,7 +2,7 @@ import { watch } from 'vue'
 import { useGameStore } from '@/stores/gameStore'
 
 const STORAGE_KEY = 'tboi-random-generator'
-const STORAGE_VERSION = 8
+const STORAGE_VERSION = 9
 
 export function useLocalStorage() {
   const store = useGameStore()
