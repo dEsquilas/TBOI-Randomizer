@@ -53,6 +53,14 @@
   },
   {
     "rank": 7,
+    "name": "Kikthai",
+    "pb": 7,
+    "alive": false,
+    "proofUrl": "https://www.twitch.tv/kikthai",
+    "twitchUrl": "https://www.twitch.tv/kikthai"
+  },
+  {
+    "rank": 8,
     "name": "crafterlynx",
     "pb": 5,
     "alive": false,
@@ -61,7 +69,7 @@
     "twitchUrl": "https://www.twitch.tv/crafterlynx"
   },
   {
-    "rank": 8,
+    "rank": 9,
     "name": "WatiLive",
     "pb": 5,
     "alive": false,
@@ -70,7 +78,7 @@
     "twitchUrl": "https://www.twitch.tv/watilive"
   },
   {
-    "rank": 9,
+    "rank": 10,
     "name": "Kikthai",
     "pb": 4,
     "alive": false,
