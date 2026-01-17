@@ -76,6 +76,11 @@ export const useGameStore = defineStore('game', () => {
   const textualEndEnabled = ref(false)
   const textualEndTextColor = ref('FFFFFF')
 
+  // Streak tracking
+  const streak = ref(0)
+  const streakPB = ref(0)
+  const streakVisible = ref(false)
+
   // Spinning animation state
   const spinningPlayers = ref([])
   const spinningObjectives = ref([])
@@ -315,6 +320,43 @@ export const useGameStore = defineStore('game', () => {
     objectiveStats.value = {}
   }
 
+  // Streak actions
+  function incrementStreak() {
+    streak.value++
+    if (streak.value > streakPB.value) {
+      streakPB.value = streak.value
+    }
+  }
+
+  function decrementStreak() {
+    if (streak.value > 0) {
+      streak.value--
+    }
+  }
+
+  function resetStreak() {
+    streak.value = 0
+  }
+
+  function incrementPB() {
+    streakPB.value++
+  }
+
+  function decrementPB() {
+    if (streakPB.value > 0) {
+      streakPB.value--
+    }
+    // Keep streak <= PB
+    if (streak.value > streakPB.value) {
+      streak.value = streakPB.value
+    }
+  }
+
+  function resetPB() {
+    streakPB.value = 0
+    streak.value = 0
+  }
+
   // Export state for localStorage
   function exportState() {
     return {
@@ -351,7 +393,10 @@ export const useGameStore = defineStore('game', () => {
       characterStats: characterStats.value,
       objectiveStats: objectiveStats.value,
       textualEndEnabled: textualEndEnabled.value,
-      textualEndTextColor: textualEndTextColor.value
+      textualEndTextColor: textualEndTextColor.value,
+      streak: streak.value,
+      streakPB: streakPB.value,
+      streakVisible: streakVisible.value
     }
   }
 
@@ -391,6 +436,9 @@ export const useGameStore = defineStore('game', () => {
     if (state.objectiveStats) objectiveStats.value = state.objectiveStats
     if (state.textualEndEnabled !== undefined) textualEndEnabled.value = state.textualEndEnabled
     if (state.textualEndTextColor) textualEndTextColor.value = state.textualEndTextColor
+    if (state.streak !== undefined) streak.value = state.streak
+    if (state.streakPB !== undefined) streakPB.value = state.streakPB
+    if (state.streakVisible !== undefined) streakVisible.value = state.streakVisible
   }
 
   return {
@@ -489,6 +537,16 @@ export const useGameStore = defineStore('game', () => {
     incrementObjectiveStat,
     decrementObjectiveStat,
     resetStats,
+    // Streak
+    streak,
+    streakPB,
+    streakVisible,
+    incrementStreak,
+    decrementStreak,
+    resetStreak,
+    incrementPB,
+    decrementPB,
+    resetPB,
     exportState,
     importState
   }

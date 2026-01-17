@@ -69,6 +69,7 @@ async function handleClick() {
   try {
     const finalResults = randomize(true) // Pass true to not set results immediately
     await spinAnimation(finalResults)
+    store.incrementStreak() // Increment streak after successful randomize
   } catch (e) {
     store.isSpinning = false
     store.spinningPlayers = []
