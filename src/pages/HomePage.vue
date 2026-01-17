@@ -113,5 +113,14 @@ function handleError(message) {
     <aside class="w-[400px] shrink-0 overflow-y-auto max-h-screen">
       <CompletionPanel />
     </aside>
+
+    <!-- Ladder Button (fixed bottom center) -->
+    <a
+      href="/ladder"
+      target="_blank"
+      class="fixed bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/80 text-white border border-gray-600 rounded hover:bg-black/90 transition-colors text-sm"
+    >
+      🏆 Ladder
+    </a>
   </div>
 </template>
