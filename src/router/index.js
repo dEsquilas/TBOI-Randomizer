@@ -1,6 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
-
-const routes = [
+export const routes = [
   {
     path: '/',
     name: 'home',
@@ -12,10 +10,3 @@ const routes = [
     component: () => import('@/pages/LeaderboardPage.vue')
   }
 ]
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes
-})
-
-export default router

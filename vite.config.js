@@ -22,4 +22,9 @@ export default defineConfig({
     globals: true,
     exclude: ['**/node_modules/**', '**/e2e/**'],
   },
+  ssgOptions: {
+    dirStyle: 'nested',
+    script: 'async',
+    formatting: 'minify',
+  },
 })
