@@ -55,6 +55,31 @@ function handleError(message) {
 
 <template>
   <div class="flex min-h-screen transition-colors duration-300" :style="{ backgroundColor: bgColor }">
+    <div class="sr-only" aria-hidden="true">
+      <h1>TBOI Randomizer — The Binding of Isaac Random Run Generator</h1>
+      <p>
+        Free random run generator for The Binding of Isaac: Rebirth and Repentance.
+        Randomize characters, objectives, and game challenges for endless replayability.
+      </p>
+      <h2>Features</h2>
+      <ul>
+        <li>All 34 characters supported, including Tainted variants (Tainted Isaac, Tainted Magdalene, Tainted Cain, Tainted Judas, Tainted ???, Tainted Eve, Tainted Samson, Tainted Azazel, Tainted Lazarus, Tainted Eden, Tainted Lost, Tainted Lilith, Tainted Keeper, Tainted Apollyon, Tainted Forgotten, Tainted Bethany, Tainted Jacob)</li>
+        <li>Randomize final bosses: Mom's Heart, Isaac, Satan, The Lamb, Blue Baby, Mega Satan, Hush, Ultra Greed, Delirium, Mother, The Beast, Boss Rush</li>
+        <li>Weighted character randomization with custom presets</li>
+        <li>Completion tracking across runs with persistent storage</li>
+        <li>Game challenge randomizer</li>
+        <li>Streak tracking and personal best records</li>
+        <li>Leaderboard for community streaks</li>
+      </ul>
+      <h2>How it works</h2>
+      <p>
+        Click the Randomize button to get a random character and objective combination.
+        Filter by normal or tainted characters, adjust weights, save your favorite presets,
+        and track which objectives you've completed. Perfect for Isaac streakers, challenge
+        runners, and anyone looking for a fresh way to play Repentance.
+      </p>
+    </div>
+
     <!-- Options Panel (left side) -->
     <aside class="w-[400px] shrink-0 overflow-y-auto max-h-screen">
       <OptionsPanel />
